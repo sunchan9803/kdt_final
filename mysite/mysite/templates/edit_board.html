@@ -1,0 +1,74 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Post</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #EEF7DA; /* 약간 진한 연두색 배경 */
+        }
+        h2 {
+            text-align: center;
+            color: #689F38; /* 진한 초록색 */
+            margin-bottom: 30px;
+            font-size: 2.5rem; /* 글자 크기 크게 조정 */
+            font-weight: 900; /* 글자 굵기 아주 굵게 조정 */
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #689F38;
+        }
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #9CCC65;
+            border-radius: 5px;
+            background-color: #D9EDB5; /* 약간 진한 연두색 */
+            font-size: 16px;
+        }
+        .btn-primary {
+            margin-top: 10px;
+            margin-bottom: 20px;
+            background-color: #8BC34A; /* 초록색 버튼 */
+            border-color: #8BC34A;
+        }
+        .btn-primary:hover {
+            background-color: #689F38; /* 진한 초록색 */
+            border-color: #689F38;
+        }
+        .btn-secondary {
+            background-color: #d9534f; /* 붉은색 버튼 */
+            border-color: #d9534f;
+        }
+        .btn-secondary:hover {
+            background-color: #c9302c; /* 진한 붉은색 */
+            border-color: #c9302c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>게시글 수정</h2>
+        <form method="post">
+            {% csrf_token %}  <!-- CSRF 보호를 위한 토큰 -->
+            {{ form.as_p }}  <!-- 폼 필드 출력 -->
+            <button type="submit" class="btn btn-primary">Save Changes</button>  <!-- 수정 저장 버튼 -->
+        </form>
+        <a href="{% url 'kingchobo:show_board' form.instance.board_number %}" class="btn btn-secondary">Cancel</a>  <!-- 수정 취소 및 상세 페이지로 돌아가기 -->
+    </div>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

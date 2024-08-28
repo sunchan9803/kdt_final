@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>검색 결과</title>
+</head>
+<body>
+    <h1>검색 결과</h1>
+
+    {% if results %}
+        <ul>
+            {% for festival in results %}
+                <li>{{ festival.festival_name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>검색 결과가 없습니다.</p>
+    {% endif %}
+    
+    <a href="{% url 'kingchobo:home' %}">홈으로 돌아가기</a>
+</body>
+</html>

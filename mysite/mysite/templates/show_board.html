@@ -1,0 +1,160 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }}</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+</head>
+<body>
+<!-- 네비게이션 바 시작 -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'kingchobo:home' %}">
+            <img src="{% static 'images/logo.png' %}" alt="Logo" height="40">
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'kingchobo:home' %}">홈</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'kingchobo:board_list' %}">게시판</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'kingchobo:search' %}">검색</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'kingchobo:category_view' %}">지역별 축제 정보</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'kingchobo:logout' %}">로그아웃</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- 네비게이션 바 끝 -->
+
+    <div class="container mt-5">
+        <div class="post-container p-4 bg-light rounded mx-auto" style="max-width: 800px;">
+            <h2 class="post-title text-center">
+                [{{ post.get_category_display }}] {{ post.title }}
+            </h2>
+            <p class="post-meta text-center text-muted">
+                <strong>Category:</strong> {{ post.category }} |
+                <strong>Author:</strong> {{ post.user.username }} |
+                <strong>Created at:</strong> {{ post.created_at }} |
+                <strong>Views:</strong> {{ post.view_c }}
+            </p>
+            <hr>
+
+            <!-- Google Fonts에서 폰트 가져오기 -->
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Dongle&family=Nanum+Gothic&family=Noto+Sans+KR:wght@100..900&family=Orbit&display=swap" rel="stylesheet">
+
+            <!-- 게시글 내용 표시 -->
+            <div style="font-size: {{ post.font_size }} !important; 
+                    font-family: {{ post.font_family|add:"'"|add:"', sans-serif" }} !important;">
+                {{ post.content|linebreaksbr }}
+            </div>
+            
+
+            
+            <!-- 좋아요 버튼 추가 -->
+            <div class="like-section text-center mt-4">
+                <form id="like-form" action="{% url 'kingchobo:like_post' post.board_number %}" method="POST">
+                    {% csrf_token %}
+                    <button type="button" id="like-button" class="btn btn-primary">
+                        👍 좋아요 <span id="like-count">{{ post.likes }}</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- 좋아요 버튼에 대한 JavaScript -->
+            <script>
+                document.getElementById('like-button').addEventListener('click', function() {
+                    var url = document.getElementById('like-form').action;
+                    var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrfToken,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.likes) {
+                            document.getElementById('like-count').textContent = data.likes;
+                        } else if (data.error) {
+                            alert(data.error);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            </script>
+
+            <!-- 게시글 수정 및 삭제 버튼 (게시글 소유자만 보임) -->
+            {% if is_owner %}
+            <div class="post-actions mt-4 text-center">
+                <a href="{% url 'kingchobo:edit_board' post.board_number %}" class="btn btn-warning">Edit</a>
+                <a href="{% url 'kingchobo:delete_board' post.board_number %}" onclick="return confirm('Are you sure you want to delete this post?');" class="btn btn-danger">Delete</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 댓글 작성 폼 (로그인된 사용자만 가능) -->
+        {% if user.is_authenticated %}
+        <div class="comment-form mt-5 mx-auto" style="max-width: 800px;">
+            <h3>Add a Comment</h3>
+            <form method="post" action="{% url 'kingchobo:add_comment' post.board_number %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success">Add Comment</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- 댓글 목록 -->
+        <div class="comments-section mt-5 mx-auto" style="max-width: 800px;">
+            <h3>Comments</h3>
+            <ul class="list-group">
+                {% for comment in post.comments.all %}
+                <li class="list-group-item">
+                    <p><strong>{{ comment.user.username }}</strong> ({{ comment.created_at }}):</p>
+                    <p>{{ comment.content }}</p>
+                    {% if comment.user == user %}
+                    <div class="comment-actions text-end">
+                        <a href="{% url 'kingchobo:edit_comment' comment.id %}" class="btn btn-sm btn-primary">Edit</a>
+                        <a href="{% url 'kingchobo:delete_comment' comment.id %}" onclick="return confirm('Are you sure you want to delete this comment?');" class="btn btn-sm btn-danger">Delete</a>
+                    </div>
+                    {% endif %}
+                </li>
+                {% empty %}
+                <li class="list-group-item text-center">No comments yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- 게시판으로 돌아가기 버튼 -->
+        <div class="text-center mt-4">
+            <a href="{% url 'kingchobo:board_list' %}" class="back-to-board btn btn-secondary">Back to Board</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

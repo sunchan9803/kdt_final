@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>글 작성하기</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            color: #333;
+        }
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+        }
+        input[type="submit"], .cancel-button {
+            width: 48%;
+            padding: 10px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .cancel-button {
+            background-color: #d9534f;
+        }
+        .cancel-button:hover {
+            background-color: #c9302c;
+        }
+        #content-preview {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+    </style>
+    <!-- Google Fonts에서 폰트 가져오기 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@700&family=Hahmlet:wght@300&family=Jua&family=Orbit&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  
+
+
+    <div class="container">
+        <h1>글 작성하기</h1>
+        <form method="post" id="postForm">
+            {% csrf_token %}
+            <label for="id_category">말머리:</label>
+            {{ form.category }}
+            <label for="id_title">제목:</label>
+            {{ form.title }}
+            <label for="id_content">내용:</label>
+            {{ form.content }}
+
+            <!-- 폰트 크기 선택 -->
+            <label for="font_size">글씨 크기:</label>
+            <select id="font_size" name="font_size">
+                <option value="16px">16px</option>
+                <option value="18px">18px</option>
+                <option value="20px">20px</option>
+                <option value="22px">22px</option>
+                <option value="24px">24px</option>
+            </select>
+
+            <!-- 폰트 선택 -->
+            <label for="font_family">폰트:</label>
+            <select id="font_family" name="font_family">
+                <option value="Dongle">Dongle</option>
+                <option value="Hahmlet">Hahmlet</option>
+                <option value="Jua">Jua</option>
+                <option value="Orbit">Orbit</option>
+            </select>
+
+            <div class="button-group">
+                <input type="submit" value="제출">
+                <a href="javascript:history.back()" class="cancel-button">취소</a>
+            </div>
+        </form>
+
+        <!-- 미리보기 섹션 -->
+        <div class="preview-container">
+            <h2>미리보기</h2>
+            <div id="content-preview" style="font-size: 16px; font-family: 'Nanum Gothic', sans-serif;">
+                여기에서 작성한 내용이 미리보기로 표시됩니다.
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 코드 -->
+    <script>
+        // 글씨 크기 선택 시 미리보기 영역에 반영
+        document.getElementById('font_size').addEventListener('change', function() {
+            document.getElementById('content-preview').style.fontSize = this.value;
+        });
+
+        // 폰트 종류 선택 시 미리보기 영역에 반영
+        document.getElementById('font_family').addEventListener('change', function() {
+            var selectedFont = this.value;
+            var fontMapping = {
+                'Dongle': "'Dongle', sans-serif",
+                'Hahmlet': "'Hahmlet', serif",
+                'Jua': "'Jua', sans-serif",
+                'Orbit': "'Orbit', sans-serif"
+            };
+
+            // 선택한 폰트를 미리보기 영역에 적용
+            document.getElementById('content-preview').style.fontFamily = fontMapping[selectedFont];
+        });
+
+        // 내용 입력 시 미리보기 영역에 반영
+        document.getElementById('id_content').addEventListener('input', function() {
+            document.getElementById('content-preview').textContent = this.value;
+        });
+    </script>
+</body>
+</html>

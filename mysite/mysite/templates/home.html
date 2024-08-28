@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Noto Sans KR', sans-serif;
+            opacity: 0;
+            animation: fadeInBody 1s ease-in-out forwards;
+            scroll-behavior: smooth;
+        }
+
+        @keyframes fadeInBody {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .hero-section {
+            background-color: #f0f0f0; /* 연한 회색 배경 */
+            color: #333;
+            padding: 40px 0;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05); /* 더 부드러운 그림자 */
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: bold;
+        }
+
+        .hero-section .highlight-small {
+            font-size: 3.0rem; /* '적' 부분의 크기를 줄임 */
+        }
+
+        .hero-section p {
+            font-size: 1.25rem;
+            color: #555; /* 더 부드러운 색상 */
+            margin-top: 10px;
+        }
+
+        .button-group a, .button-group button {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .button-group a:hover, .button-group button:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-success {
+            background-color: #77dd77; /* 파스텔톤 초록색 */
+            border-color: #77dd77;
+        }
+
+        .btn-danger {
+            background-color: #ff6961; /* 파스텔톤 빨간색 */
+            border-color: #ff6961;
+        }
+
+        .btn-info {
+            background-color: #84b6f4; /* 파스텔톤 파란색 */
+            border-color: #84b6f4;
+        }
+
+        .btn-warning {
+            background-color: #f4d35e; /* 더 부드러운 노란색 */
+            border-color: #f4d35e;
+            color: #333; /* 글자색을 더 어둡게 하여 가독성 향상 */
+        }
+
+        .image-gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 두 개의 컬럼 */
+            grid-gap: 20px; /* 이미지 간의 간격 */
+            max-width: 800px; /* 갤러리의 최대 너비 */
+            margin: 50px auto; /* 중앙 정렬 */
+        }
+
+        .image-gallery img {
+            width: 100%; /* 이미지를 컨테이너 너비에 맞춤 */
+            height: auto;
+            border-radius: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .image-gallery img:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-section text-center">
+        <h1>
+            <img src="{% static 'images/logo.png' %}" alt="Logo" style="height: 80px; vertical-align: middle;"> <!-- 로고 이미지 추가 -->
+            대한민국 뒤<span class="highlight-small">적</span>뒤<span class="highlight-small">적</span>!
+        </h1>
+        {% if user.is_authenticated %}
+            <p>축제를 찾아볼까요?, {{ user.nickname }}님!</p> <!-- 연한 글씨로 닉네임 표시 -->
+        {% endif %}
+    </div>
+
+    <!-- Button Group -->
+    <div class="text-center button-group">
+        {% if not user.is_authenticated %}
+            <a href="{% url 'kingchobo:register' %}" class="btn btn-primary mx-2">함께하기</a>
+            <a href="{% url 'kingchobo:login' %}" class="btn btn-secondary mx-2">로그인</a>
+        {% else %}
+            <a href="{% url 'kingchobo:board_list' %}" class="btn btn-success mx-2">게시판</a>
+            <form action="{% url 'kingchobo:logout' %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger mx-2">로그아웃</button>
+            </form>
+            <a href="{% url 'kingchobo:search' %}" class="btn btn-info mx-2">검색으로 축제 찾기</a>
+            <a href="{% url 'kingchobo:category_view' %}" class="btn btn-warning mx-2">지역별 축제 찾기</a>
+        {% endif %}
+    </div>
+
+    <div class="image-gallery">
+        <a href="{% url 'kingchobo:search_spring' %}">
+            <img src="{% static 'images/봄.png' %}" alt="봄 축제 이미지" class="img-fluid">
+        </a>
+        <a href="{% url 'kingchobo:search_summer' %}">
+            <img src="{% static 'images/여름.png' %}" alt="여름 축제 이미지" class="img-fluid">
+        </a>
+        <a href="{% url 'kingchobo:search_fall' %}">
+            <img src="{% static 'images/가을.png' %}" alt="가을 축제 이미지" class="img-fluid">
+        </a>
+        <a href="{% url 'kingchobo:search_winter' %}">
+            <img src="{% static 'images/겨울.png' %}" alt="겨울 축제 이미지" class="img-fluid">
+        </a>
+    </div>
+    

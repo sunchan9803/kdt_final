@@ -1,0 +1,166 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>축제 검색</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <style>
+        body {
+            padding: 20px;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: black; /* 색상 변경 */
+            font-weight: bold; /* 글꼴 굵기 변경 */
+            flex-grow: 1;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            text-align: center;
+            padding: 8px;
+        }
+        .return-button {
+            color: white;
+            background-color: #28a745;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .search-form {
+           
+                display: flex !important; /* 검색 폼을 flexbox로 변경하여 한 줄에 정렬 */
+                gap: 10px !important; /* 요소 사이 간격 추가 */
+                align-items: center !important; /* 요소를 수직 가운데 정렬 */
+            
+        }
+        .website-button {
+            background-color: #87CEEB;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            
+        }
+        .website-button:hover {
+            background-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 바 시작 -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'kingchobo:home' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Logo" height="40">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'kingchobo:home' %}">홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'kingchobo:board_list' %}">게시판</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'kingchobo:search' %}">검색</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'kingchobo:category_view' %}">지역별 축제 정보</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'kingchobo:logout' %}">로그아웃</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- 네비게이션 바 끝 -->
+
+    <div class="container mt-5">
+        <h1 class="text-center">축제 검색</h1>
+        <!-- 검색 폼 -->
+    
+    <form class="search-form">
+    <input class="form-control" type="text" name="q" value="{{ query }}" placeholder="검색어를 입력하세요" style="width: 1220px;">
+    <button class="btn btn-primary" type="submit">검색</button>
+    </form>
+
+        <!-- 검색 결과 테이블 -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>지역</th>
+                    <th>축제명</th>
+                    <th>개최장소</th>
+                    <th>시작일</th>
+                    <th>종료일</th>
+                    <th>축제내용</th>
+                    <th>전화번호</th>
+                    <th>도로명주소</th>
+                    <th>지번주소</th>
+                    <th>홈페이지</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for festival in page_obj.object_list %}
+                <tr>
+                    <td>{{ festival.region }}</td>
+                    <td>{{ festival.festival_name }}</td>
+                    <td>{{ festival.venue }}</td>
+                    <td>{{ festival.start_date }}</td>
+                    <td>{{ festival.end_date }}</td>
+                    <td>{{ festival.content }}</td>
+                    <td>{{ festival.phone_number }}</td>
+                    <td>{{ festival.road_address }}</td>
+                    <td>{{ festival.jibun_address }}</td>
+                    <td><button onclick="window.open('{{ festival.website }}', '_blank')" class="website-button">방문</button></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10">검색 결과가 없습니다.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- 페이지 네비게이션 -->
+        <div class="pagination justify-content-center">
+            <nav>
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?q={{ query }}&page=1">&laquo; 처음</a></li>
+                        <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ page_obj.previous_page_number }}">이전</a></li>
+                    {% endif %}
+                    <li class="page-item active"><a class="page-link">페이지 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</a></li>
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ page_obj.next_page_number }}">다음</a></li>
+                        <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ page_obj.paginator.num_pages }}">마지막 &raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        <a href="{% url 'kingchobo:home' %}" class="btn btn-primary mt-4">홈으로 돌아가기</a>
+    </div>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

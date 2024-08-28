@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Site{% endblock %}</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            background-color: #4CAF50;
+            overflow: hidden;
+            padding: 10px 20px;
+        }
+        .navbar a {
+            float: left;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+        .navbar a:hover {
+            background-color: #45a049;
+            color: white;
+        }
+        .navbar a.logout {
+            float: right;
+        }
+        .container {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="{% url 'kingchobo:home' %}">홈</a>
+        <a href="{% url 'kingchobo:board_list' %}">게시판</a>
+        <a href="{% url 'kingchobo:search' %}">검색</a>
+        <a href="{% url 'kingchobo:category_view' %}">지역별 축제 정보</a>
+        <a href="{% url 'kingchobo:logout' %}" class="logout">로그아웃</a>
+    </div>
+
+    <div class="container">
+        {% block content %}
+        <!-- 하위 템플릿에서 내용이 여기에 추가됩니다 -->
+        {% endblock %}
+    </div>
+</body>
+</html>

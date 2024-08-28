@@ -1,0 +1,203 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Board</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #EEF7DA; /* 약간 진한 연두색 배경 */
+        }
+        h2 {
+            text-align: center;
+            color: #689F38; /* 진한 초록색 */
+            margin-bottom: 30px;
+            font-size: 2.5rem; /* 글자 크기 크게 조정 */
+            font-weight: 900; /* 글자 굵기 아주 굵게 조정 */
+        }
+        .list-group-item {
+            background-color: #D9EDB5; /* 약간 진한 연두색 */
+            border: 1px solid #9CCC65; /* 연두색 보더 */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            transition: background-color 0.3s, color 0.3s; /* 배경색과 글자색 전환을 부드럽게 */
+        }
+        .list-group-item:nth-child(odd) {
+            background-color: #C5E1A5; /* 조금 더 진한 연두색 */
+        }
+        .list-group-item:nth-child(even) {
+            background-color: #E6F5D0; /* 조금 더 연한 연두색 */
+        }
+        .list-group-item a {
+            color: #33691E; /* 검정에 가까운 진한 초록색 */
+            text-decoration: none;
+            transition: color 0.3s; /* 글자 색상 전환 부드럽게 */
+            font-size: 1.2rem; /* 글자 크기 조정 */
+            font-weight: 600; /* 글자 굵기 조정 */
+        }
+        .list-group-item:hover {
+            background-color: #AED581; /* 마우스 오버 시 진한 연두색 */
+            color: #33691E; /* 글자 색상도 진하게 */
+        }
+        .list-group-item a:hover {
+            color: #33691E; /* 마우스 오버 시 글자색 유지 */
+        }
+        .post-number {
+            margin-right: 10px;
+            font-weight: bold;
+            color: #689F38; /* 진한 초록색 */
+        }
+        .post-details {
+            font-size: 0.9rem;
+            color: #6c757d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-primary {
+            margin-top: 10px;
+            margin-bottom: 20px;
+            background-color: #8BC34A; /* 초록색 버튼 */
+            border-color: #8BC34A;
+        }
+        .btn-primary:hover {
+            background-color: #689F38; /* 진한 초록색 */
+            border-color: #689F38;
+        }
+        .like-info {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #33691E;
+            margin-left: 10px; /* 적절히 간격 추가 */
+        }
+        .like-info i {
+            margin-right: 5px;
+        }
+        #content-preview {
+        font-family: 'Noto Sans KR', sans-serif;
+        }
+    </style>
+</head>
+<body>
+   <!-- 네비게이션 바 시작 -->
+   <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'kingchobo:home' %}">
+            <img src="{% static 'images/logo.png' %}" alt="Logo" height="40">
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'kingchobo:home' %}">홈</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'kingchobo:board_list' %}">게시판</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'kingchobo:search' %}">검색</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'kingchobo:category_view' %}">지역별 축제 정보</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'kingchobo:logout' %}">로그아웃</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- 네비게이션 바 끝 -->
+     
+    <div class="container mt-4">
+        <h2>게시판</h2>
+        <a href="{% url 'kingchobo:board_write' %}" class="btn btn-primary">글쓰기</a>
+    
+        <!-- 정렬 버튼 -->
+        <div class="sorting-buttons mt-3">
+            <a href="{% url 'kingchobo:board_list' %}?order_by=created_at" class="btn btn-primary {% if order_by == 'created_at' %}active{% endif %}">
+                최신순 정렬
+            </a>
+            <a href="{% url 'kingchobo:board_list' %}?order_by=likes" class="btn btn-primary {% if order_by == 'likes' %}active{% endif %}">
+                좋아요순 정렬
+            </a>
+            <a href="{% url 'kingchobo:board_list' %}?order_by=comments" class="btn btn-primary {% if order_by == 'comments' %}active{% endif %}">
+                댓글순 정렬
+            </a>
+        </div>
+    
+        <!-- 게시판 목록 -->
+        <ul class="list-group mt-3">
+            {% for post in posts %}
+            <li class="list-group-item">
+                <div class="post-title">
+                    <span class="post-number">{{ post.board_number }}</span>
+                    <a href="{% url 'kingchobo:show_board' post.board_number %}">[{{ post.get_category_display }}] {{ post.title }}</a>
+                </div>
+                <div class="post-details">
+                    <span>By: {{ post.user.username }} | Views: {{ post.view_c }}</span>
+                    <span class="like-info">
+                        <i class="fas fa-thumbs-up"></i> {{ post.likes }} likes
+                    </span>
+                    <span class="comment-info">
+                        <i class="fas fa-comments"></i> {{ post.comment_count }} comments
+                    </span>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    
+        <!-- 페이지 네이션 -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center mt-4">
+                {% if posts.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1&order_by={{ order_by }}" aria-label="First">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ posts.previous_page_number }}&order_by={{ order_by }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% for num in posts.paginator.page_range %}
+                    {% if posts.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > posts.number|add:'-3' and num < posts.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}&order_by={{ order_by }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if posts.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ posts.next_page_number }}&order_by={{ order_by }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ posts.paginator.num_pages }}&order_by={{ order_by }}" aria-label="Last">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+//category_view.html
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>카테고리</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: black;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        .map-container {
+            position: relative;
+            width: 900px;
+            height: 1050px;
+            margin: auto;
+        }
+        .map-container img {
+            width: 100%;
+            height: auto;
+        }
+        .region {
+            position: absolute;
+            color: black;
+            font-size: 22px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: color 0.4s;
+            white-space: nowrap;
+            font-weight: bold
+        }
+        .region:hover {
+            color: #0056b3;
+        }
+
+        /* 한국 링크 스타일 */
+        .korea {
+            position: absolute;
+            top: 20px; /* 맨 위 중앙 위치 */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: bold;
+            color: black;
+            text-decoration: none;
+        }
+        .korea:hover {
+            color: #0056b3;
+        }
+
+        .seoul { top: 230px; left: 330px; }
+        .busan { top: 570px; left: 620px; }
+        .jeju { top: 800px; left: 320px; }
+        .gangwon { top: 180px; left: 490px; }
+        .daejeon { top: 400px; left: 380px; }
+        .gyeongsang { top: 420px; left: 590px; }
+        .chungcheong { top: 340px; left: 370px; }
+        .jeolla { top: 630px; left: 350px; }
+        .sejong { top: 370px; left: 340px; }
+        .gwangju { top: 600px; left: 320px; }
+        .gyeonggi { top: 180px; left: 350px; }
+        .jeonbuk { top: 500px; left: 340px; }
+        .ulsan { top: 510px; left: 620px; }
+        .daegu { top: 500px; left: 530px; }
+        .incheon { top: 250px; left: 270px; }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 바 시작 -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'kingchobo:home' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Logo" height="40">
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'kingchobo:home' %}">홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'kingchobo:board_list' %}">게시판</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'kingchobo:search' %}">검색</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'kingchobo:category_view' %}">지역별 축제 정보</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'kingchobo:logout' %}">로그아웃</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- 네비게이션 바 끝 -->
+
+    <div class="container">
+        <h1>지역별 축제 찾기</h1>
+        <div class="map-container">
+            <a href="{% url 'kingchobo:region_festivals' region_name='한국' %}" class="korea">한국</a> <!-- 한국 추가 -->
+            <img src="{% static 'images/korea_map.png' %}" alt="Korea Map">
+            <a href="{% url 'kingchobo:region_festivals' region_name='서울' %}" class="region seoul">서울</a>
+            <a href="{% url 'kingchobo:region_festivals' region_name='부산' %}" class="region busan">부산</a>
+            <a href="{% url 'kingchobo:region_festivals' region_name='제주' %}" class="region jeju">제주</a>
+            <a href="{% url 'kingchobo:region_festivals' region_name='강원' %}" class="region gangwon">강원</a>
+            <a href="{% url 'kingchobo:region_festivals' region_name='대전' %}" class="region daejeon">대전</a>
+            <a href="{% url 'kingchobo:region_festivals' region_name='경상' %}" class="region gyeongsang">경상</a>
+            <a href="{% url 'kingchobo:region_festivals' region_name='충청' %}" class="region chungcheong">충청</a>
+            <a href="{% url 'kingchobo:region_festivals' region_name='전라' %}" class="region jeolla">전라</a>
+            <a href="{% url 'kingchobo:region_festivals' region_name='세종' %}" class="region sejong">세종</a>
+            <a href="{% url 'kingchobo:region_festivals' region_name='광주' %}" class="region gwangju">광주</a>
+            <a href="{% url 'kingchobo:region_festivals' region_name='경기' %}" class="region gyeonggi">경기</a>
+            <a href="{% url 'kingchobo:region_festivals' region_name='전북' %}" class="region jeonbuk">전북</a>
+            <a href="{% url 'kingchobo:region_festivals' region_name='울산' %}" class="region ulsan">울산</a>
+            <a href="{% url 'kingchobo:region_festivals' region_name='대구' %}" class="region daegu">대구</a>
+            <a href="{% url 'kingchobo:region_festivals' region_name='인천' %}" class="region incheon">인천</a>
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'kingchobo:home' %}" class="btn btn-primary">홈으로 돌아가기</a>
+        </div>
+    </div>
+
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
